@@ -10,12 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class BookItemDetailActivity extends AppCompatActivity {
-
+    private int position=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_item_detail);
+        Intent intent = getIntent();
+        if(intent != null){
+            String name = intent.getStringExtra("name");
 
+            if(null != name ){
+                position = intent.getIntExtra("position",-1);
+                EditText editTextItemName= findViewById(R.id.edittext_item_name);
+                editTextItemName.setText(name);
+            }
+        }
         Button buttonOk= findViewById(R.id.button_item_details_ok);
 
         buttonOk.setOnClickListener(new View.OnClickListener() {
