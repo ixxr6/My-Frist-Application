@@ -6,4 +6,6 @@
     <string name="change_text">Change Text</string>
     <string name="bookname1">bookname1</string>
     <string name="todo">TODO</string>
+    <string name="OK">string_ok</string>
+    <string name="Bookname">BookName</string>
 </resources>
