@@ -2,7 +2,6 @@ package com.jnu.student;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -29,18 +28,8 @@ public class ShoppingListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ShoppingListFragment newInstance() {
-        ShoppingListFragment fragment = new ShoppingListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +46,7 @@ public class ShoppingListFragment extends Fragment {
         if (0 == bookItems.size()) {
             bookItems.add(new BookItem("软件项目管理案例教程（第4版）",R.drawable.book_2));
         }
-        bookItemAdapter =new BookItemAdapter(bookItems);
+        bookItemAdapter = new BookItemAdapter(bookItems);
         mainRecyclerview.setAdapter(bookItemAdapter);
 
         registerForContextMenu(mainRecyclerview);
@@ -68,7 +57,10 @@ public class ShoppingListFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
 
-                        String name = data.getStringExtra("name");
+                        String name = null;
+                        if (data != null) {
+                            name = data.getStringExtra("name");
+                        }
                         bookItems.add(new BookItem(name,R.drawable.book_no_name));
                         bookItemAdapter.notifyItemInserted(bookItems.size());
 
@@ -76,8 +68,6 @@ public class ShoppingListFragment extends Fragment {
                         new DataBank().SaveBookItems(requireActivity(),bookItems);
 
                         //获取返回的数据//在这塑可以根据需要进行进一步处理
-                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-
                     }
                 }
         );
@@ -86,8 +76,14 @@ public class ShoppingListFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        int position = data.getIntExtra("position",0);
-                        String name = data.getStringExtra("name");
+                        int position = 0;
+                        if (data != null) {
+                            position = data.getIntExtra("position",0);
+                        }
+                        String name = null;
+                        if (data != null) {
+                            name = data.getStringExtra("name");
+                        }
                         BookItem bookItem = bookItems.get(position);
                         bookItem.setName(name);
                         bookItemAdapter.notifyItemChanged(position);
@@ -95,8 +91,6 @@ public class ShoppingListFragment extends Fragment {
                         new DataBank().SaveBookItems(requireActivity(),bookItems);
 
                         //获取返回的数据//在这塑可以根据需要进行进一步处理
-                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-
                     }
                 }
         );
@@ -113,7 +107,7 @@ public class ShoppingListFragment extends Fragment {
     private static final int MENU_ITEM_DELETE = 1;
     private static final int MENU_ITEM_UPDATE = 2;
     public boolean onContextItemSelected(MenuItem item) {
-        int position = item.getOrder();  // 获取被点击的项的位置
+        item.getOrder();
         switch (item.getItemId()) {
             case MENU_ITEM_ADD:
 
@@ -125,20 +119,14 @@ public class ShoppingListFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
                 builder.setTitle("Delete Data");
                 builder.setMessage("Are you sure you want to delete this data?");
-                builder.setPositiveButton( "确定",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        bookItems.remove(item.getOrder());
-                        bookItemAdapter.notifyItemRemoved(item.getOrder());
+                builder.setPositiveButton( "确定", (dialog, which) -> {
+                    bookItems.remove(item.getOrder());
+                    bookItemAdapter.notifyItemRemoved(item.getOrder());
 
 
-                        new DataBank().SaveBookItems(requireActivity(),bookItems);
-                    }
-
+                    new DataBank().SaveBookItems(requireActivity(),bookItems);
                 });
-                builder.setNegativeButton( "取消",new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {}
-                });
+                builder.setNegativeButton( "取消", (dialog, which) -> {});
                 builder.create().show();
                 break;
             case MENU_ITEM_UPDATE:
@@ -154,15 +142,15 @@ public class ShoppingListFragment extends Fragment {
         return true;
     }
 
-    public class BookItemAdapter extends RecyclerView.Adapter<BookItemAdapter.ViewHolder> {
+    public static class BookItemAdapter extends RecyclerView.Adapter<BookItemAdapter.ViewHolder> {
 
-        private ArrayList<BookItem> bookItemArrayList;
+        private final ArrayList<BookItem> bookItemArrayList;
 
         /**
          * Provide a reference to the type of views that you are using
          * (custom ViewHolder)
          */
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
             private final TextView textViewName;
 
             private final ImageView ImageViewNameItem;

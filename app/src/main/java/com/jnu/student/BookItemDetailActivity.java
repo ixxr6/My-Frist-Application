@@ -1,16 +1,14 @@
 package com.jnu.student;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class BookItemDetailActivity extends AppCompatActivity {
-    private int position=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,24 +18,21 @@ public class BookItemDetailActivity extends AppCompatActivity {
             String name = intent.getStringExtra("name");
 
             if(null != name ){
-                position = intent.getIntExtra("position",-1);
+                intent.getIntExtra("position", -1);
                 EditText editTextItemName= findViewById(R.id.edittext_item_name);
                 editTextItemName.setText(name);
             }
         }
         Button buttonOk= findViewById(R.id.button_item_details_ok);
 
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                EditText editTextItemName= findViewById(R.id.edittext_item_name);
+        buttonOk.setOnClickListener(v -> {
+            Intent intent1 = new Intent();
+            EditText editTextItemName= findViewById(R.id.edittext_item_name);
 
-                intent.putExtra( "name" , editTextItemName.getText().toString());
-                setResult(Activity.RESULT_OK, intent) ;
+            intent1.putExtra( "name" , editTextItemName.getText().toString());
+            setResult(Activity.RESULT_OK, intent1) ;
 
-                BookItemDetailActivity.this.finish();
-            }
+            BookItemDetailActivity.this.finish();
         });
     }
 }

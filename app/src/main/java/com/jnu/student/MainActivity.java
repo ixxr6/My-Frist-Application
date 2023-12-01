@@ -19,7 +19,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 
 public class MainActivity extends AppCompatActivity {
-    private final String[] tabHeaderStrings = {"图书", "百度地图", "新闻"};
+    private final String[] tabHeaderStrings = {"图书", "  地图", "新闻"};
 
 
     @Override
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         return new ShoppingListFragment();
                     case 1:
-                        return new BaiduMapFrag();
+                        return new TencentMapsFragment();
                     case 2:
                         return new WebViewFragment();
                     default:
