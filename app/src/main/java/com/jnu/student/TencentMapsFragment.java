@@ -1,31 +1,63 @@
 package com.jnu.student;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
+import com.jnu.student.data.DataDownload;
+import com.jnu.student.data.ShopLocation;
 import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
 import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
+
 public class TencentMapsFragment extends Fragment {
 
     private  com.tencent.tencentmap.mapsdk.maps.MapView mapView =null;
 
-    public TencentMapsFragment() {
-        // Required empty public constructor
-    }
+    public static TencentMapsFragment newInstance() {
+    TencentMapsFragment fragment = new TencentMapsFragment();
+    Bundle args = new Bundle();
 
+        fragment.setArguments(args);
+        return fragment;
+}
+    public class DataDownloadTask extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return new DataDownload().download(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String responseData) {
+            super.onPostExecute(responseData);
+            if (responseData != null) {
+                ArrayList<ShopLocation> shopLocations = new DataDownload().parseJsonObjects(responseData);
+                TencentMap tencentMap = mapView.getMap();
+                for (ShopLocation shopLocation : shopLocations) {
+                    LatLng point1 = new LatLng(shopLocation.getLatitude(), shopLocation.getLongitude());
+                    MarkerOptions markerOptions = new MarkerOptions(point1)
+                            .title(shopLocation.getName());
+                    Marker marker = tencentMap.addMarker(markerOptions);
+                }
+            }
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+
+        }
     }
 
 
@@ -35,7 +67,7 @@ public class TencentMapsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_tencent_maps, container, false);
         mapView = rootView.findViewById(R.id.mapView);
-
+        new DataDownloadTask().execute("http://file.nidama.net/class/mobile_develop/data/bookstore2023.json");
         TencentMap TCMap = mapView.getMap();
 //
         // 添加图标型Marker
@@ -54,20 +86,26 @@ public class TencentMapsFragment extends Fragment {
         //显示信息窗口
         marker.showInfoWindow();
         //设置Marker点击事件
-        TCMap.setOnInfoWindowClickListener(new TencentMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Log.i("TAG","InfoWindow被点击时回调函数");
+        new Thread(new Runnable() {
+            public void run() {
+                String responseData = new DataDownload().download("http://file.nidama.net/class/mobile_develop/data/bookstore.json");
+                ArrayList<ShopLocation> shopLocations = new DataDownload().parseJsonObjects(responseData);
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TencentMap tencentMap = mapView.getMap();
+                        for (ShopLocation shopLocation : shopLocations) {
+                            LatLng point = new LatLng(shopLocation.getLatitude(), shopLocation.getLongitude());
+                            MarkerOptions markerOptions = new MarkerOptions(point)
+                                    .title(shopLocation.getName());
+                            Marker marker = tencentMap.addMarker(markerOptions);
+
+
+                        }
+                    }
+                });
             }
-            //  windowWidth - InfoWindow的宽度
-            //windowHigh - InfoWindow的高度
-            // x - 点击点在InfoWindow的x坐标点
-            //y - 点击点在InfoWindow的y坐标点
-            @Override
-            public void onInfoWindowClickLocation(int width, int height, int x, int y) {
-                Log.i("TAG","当InfoWindow点击时，点击的回调");
-            }
-        });
+        }).start();
         return rootView;
     }
     @Override
