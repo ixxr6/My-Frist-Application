@@ -3,14 +3,10 @@ package com.jnu.student;
 
 import android.os.Bundle;
 
-
-
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
-
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -19,7 +15,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 
 public class MainActivity extends AppCompatActivity {
-    private final String[] tabHeaderStrings = {"图书", "  地图", "新闻"};
+    private final String[] tabHeaderStrings = {"图书", "地图", "新闻","时钟"};
 
 
     @Override
@@ -37,11 +33,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class FragmentAdapter extends FragmentStateAdapter {
-        private static final int NUM_TABS = 3;
+        private static final int NUM_TABS = 4;
 
         public FragmentAdapter(FragmentManager fragmentManager, Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);
         }
+
             @Override
             public Fragment createFragment (int position){
                 switch (position) {
@@ -51,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                         return new TencentMapsFragment();
                     case 2:
                         return new WebViewFragment();
+                    case 3:
+                        return new ClockViewFragment();
                     default:
                         return null;
                 }
