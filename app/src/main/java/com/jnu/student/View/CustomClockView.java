@@ -19,8 +19,6 @@ public class CustomClockView extends View {
     private Paint hourHandPaint;
     private Paint minuteHandPaint;
     private Paint secondHandPaint;
-    private int viewWidth;
-    private int viewHeight;
     private int centerX;
     private int centerY;
     private int radius;
@@ -63,13 +61,11 @@ public class CustomClockView extends View {
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        viewWidth = w;
-        viewHeight = h;
-        centerX = viewWidth / 2;
-        centerY = viewHeight / 2;
-        radius = Math.min(viewWidth, viewHeight) / 2 - 20;
+    protected void onSizeChanged(int nw, int nh, int w, int h) {
+        super.onSizeChanged(nw, nh, w, h);
+        centerX = nw / 2;
+        centerY = nh / 2;
+        radius = Math.min(nw, nh) / 2 - 20;
     }
 
     @Override
@@ -115,8 +111,8 @@ public class CustomClockView extends View {
         float secondY = (float) (centerY - secondHandLength * Math.cos(secondAngle));
         canvas.drawLine(centerX, centerY, secondX, secondY, secondHandPaint);
     }
-    private Handler handler = new Handler();
-    private Runnable runnable = new Runnable() {
+    private final Handler handler = new Handler();
+    private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             invalidate(); // 触发重绘

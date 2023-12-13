@@ -98,7 +98,7 @@ public class ShoppingListFragment extends Fragment {
 
 
     }
-    //将 shopItems 和 shopItemAdapter 定义为类的成员变量
+    //将 bookItems 和 bookItemAdapter 定义为类的成员变量
     private ArrayList<BookItem> bookItems = new ArrayList<>();
     private BookItemAdapter bookItemAdapter;
     ActivityResultLauncher<Intent> addItemLauncher;
